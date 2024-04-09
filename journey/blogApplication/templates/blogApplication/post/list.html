@@ -1,0 +1,45 @@
+<!-- Tell Django to extend the base.html template and override the title block with the title of the page. 
+Then, define the content block with the content of the page. 
+The content block contains a heading, a loop that iterates over the posts, and displays the title, publication date, author, and body of each post. 
+The body of each post is truncated to 30 words and displayed with line breaks. -->
+
+{% extends 'blogApplication/base.html' %}
+{% load blog_tags %}
+
+
+{% block title %}MY BLOG{% endblock %}
+
+{% block content %}
+<h1>My Blog</h1>
+{% if tag %}
+ <h2>Posts tagged with "{{ tag.name }}"</h2>
+ {% endif %}
+{% for post in posts %}
+    <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+
+    <!-- join filter is used to concatenate the tags with a comma and a space. -->
+    <p class="tags">
+        Tags:
+
+        <!-- Link here is created for each tag. The link points to the URL pattern named post_list_by_tag, which takes the tag slug as an argument. -->
+        {% for tag in post.tags.all %}
+        <a href="{% url 'blogApplication:post_list_by_tag' tag.slug %}">
+        {{ tag.name }}
+        </a>
+        <!-- ForLoop: This statement checks if the current iteration is not the last one in the loop. If it is not the last iteration, a comma and a space are added after the tag name. -->
+        {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p> 
+    
+    <p class="date">
+        Published {{ post.publish }} by {{ post.author }}
+    </p>
+    <!-- CustomFilters: truncate_html truncates a string after a certain number of words avoiding unclosed HTML tags. -->
+    {{ post.body | markdown | truncatewords_html:30 }}
+{% endfor %}
+    <!-- include 'pagination.html' with page=page_obj This line includes the pagination.html template and passes the page_obj variable to it from the class based post list view. -->
+    
+    {% include 'pagination.html' with page=posts %} 
+    <!-- This line includes the pagination.html template and passes the posts variable to it from the function based post list view.  -->
+
+{% endblock %}

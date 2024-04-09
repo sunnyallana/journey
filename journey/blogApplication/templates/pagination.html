@@ -1,0 +1,16 @@
+<!-- In the code below, we are creating a pagination template that will be used to display the pagination links in the blog application.
+ When a user clicks on the "previous" or "next" link, it triggers a request with the corresponding page number appended to the URL as a query parameter. -->
+
+<div>
+    <span class="step-links">
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}">Next</a>
+        {% endif %}
+        </span>
+</div>
